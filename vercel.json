@@ -3,7 +3,6 @@
   "outputDirectory": "dist",
   "installCommand": "npm ci",
   "devCommand": "npm run dev",
-
   "rewrites": [
     {
       "source": "/((?!api).*)",

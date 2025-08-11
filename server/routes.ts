@@ -22,8 +22,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Serve zip file
-  app.get("/complete-github-files.zip", (req, res) => {
-    res.download(path.resolve("complete-github-files.zip"));
+  app.get("/complete-fullstack-github.zip", (req, res) => {
+    res.download(path.resolve("complete-fullstack-github.zip"));
   });
 
   // Serve deployment package download page

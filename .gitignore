@@ -66,3 +66,7 @@ jspm_packages/
 # Replit specific
 .replit
 replit.nix
+
+# Local development files
+.cache/
+.local/

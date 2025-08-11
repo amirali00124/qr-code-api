@@ -1,6 +1,6 @@
 import type { Express } from "express";
-import { createServer, type Server } from "http";
 import path from "path";
+import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import QRCode from "qrcode";
 import sharp from "sharp";
@@ -14,6 +14,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       version: "1.0.0",
       environment: process.env.NODE_ENV || "development"
     });
+  });
+
+  // Serve download page
+  app.get("/download", (req, res) => {
+    res.sendFile(path.resolve("download.html"));
+  });
+
+  // Serve zip file
+  app.get("/complete-github-files.zip", (req, res) => {
+    res.download(path.resolve("complete-github-files.zip"));
   });
 
   // Serve deployment package download page

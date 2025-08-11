@@ -1,98 +1,92 @@
-# QR Code API Landing Page
+# QR Code API
 
-A professional landing page for a QR Code generation API service hosted on RapidAPI. Built with React, TypeScript, and Tailwind CSS.
+A professional QR Code generation API built for RapidAPI marketplace integration.
 
 ## Features
 
-- 🎨 Modern, responsive design
-- 🔧 Interactive demo with real-time preview
-- 💰 Optimized pricing strategy for fast conversions
-- 📱 Mobile-first responsive layout
-- 🚀 RapidAPI marketplace integration
-- 📊 Analytics and usage tracking features
-- 🔒 Privacy policy and terms of service pages
+- Generate QR codes with custom styling options
+- Batch QR code generation (up to 100 items)
+- Multiple formats: PNG, SVG
+- Customizable colors, sizes, and error correction levels
+- Analytics and usage tracking
+- Health monitoring endpoints
 
-## Quick Start
+## API Endpoints
 
-1. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-2. **Start development server:**
-   ```bash
-   npm run dev
-   ```
-
-3. **Update RapidAPI URL:**
-   Edit `client/src/config/rapidapi.ts` with your RapidAPI listing URL
-
-## Project Structure
-
+### Health Check
 ```
-├── client/                 # Frontend React application
-│   ├── src/
-│   │   ├── components/     # UI components
-│   │   ├── pages/         # Page components
-│   │   ├── config/        # Configuration files
-│   │   └── lib/           # Utilities and helpers
-├── server/                # Backend Express server
-├── shared/                # Shared types and schemas
-└── docs/                  # Documentation
+GET /api/health
 ```
 
-## Configuration
-
-### RapidAPI Integration
-
-Update your RapidAPI URL in `client/src/config/rapidapi.ts`:
-
-```typescript
-export const RAPIDAPI_URL = "https://rapidapi.com/your-username/your-qrcode-api";
+### Generate QR Code
+```
+POST /api/qr/generate
+```
+**Request Body:**
+```json
+{
+  "data": "https://example.com",
+  "size": 300,
+  "format": "png",
+  "color": "#000000",
+  "background_color": "#ffffff",
+  "error_correction": "M",
+  "border": 2
+}
 ```
 
-This will redirect all pricing buttons and contact links to your RapidAPI listing.
+### Batch Generation
+```
+POST /api/qr/batch
+```
+**Request Body:**
+```json
+{
+  "items": [
+    {
+      "data": "https://example1.com",
+      "size": 200,
+      "format": "png",
+      "custom_id": "qr1"
+    }
+  ]
+}
+```
+
+### QR Code Info
+```
+GET /api/qr/info/{qr_id}
+```
+
+### Analytics
+```
+GET /api/analytics?period=month
+```
 
 ## Deployment
 
-### Replit (Recommended)
-- Push to Replit and click "Deploy"
-- Automatic SSL, scaling, and hosting included
+### Vercel Deployment
 
-### Vercel
-```bash
-npm run build
-vercel deploy
-```
+1. Push code to GitHub repository
+2. Connect repository to Vercel
+3. Deploy with automatic builds
+4. API will be available at: `https://your-app.vercel.app/api/`
 
-### Netlify
-```bash
-npm run build
-# Upload dist/ folder to Netlify
-```
+### Environment Setup
 
-### Traditional Hosting
-```bash
-npm run build
-# Upload dist/ folder to your web server
-```
+No environment variables required for basic functionality.
 
-## Scripts
+## RapidAPI Integration
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run linting
+This API is designed for RapidAPI marketplace listing. The `rapidapi.yaml` file contains the OpenAPI specification for marketplace integration.
 
 ## Tech Stack
 
-- **Frontend:** React 18, TypeScript, Tailwind CSS
-- **Backend:** Express.js, Node.js
-- **Build Tool:** Vite
-- **UI Components:** shadcn/ui, Radix UI
-- **Icons:** Lucide React
-- **State Management:** TanStack Query
+- **Runtime**: Node.js with TypeScript
+- **Framework**: Vercel Serverless Functions
+- **QR Generation**: qrcode library
+- **API Documentation**: OpenAPI 3.0 specification
 
 ## License
 
-MIT License - see LICENSE file for details
+MIT License

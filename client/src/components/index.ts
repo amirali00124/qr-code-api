@@ -1,0 +1,9 @@
+export { default as Header } from './header';
+export { default as HeroSection } from './hero-section';
+export { default as FeaturesSection } from './features-section';
+export { default as DemoSection } from './demo-section';
+export { default as DocumentationSection } from './documentation-section';
+export { default as PricingSection } from './pricing-section';
+export { default as FaqSection } from './faq-section';
+export { default as CtaSection } from './cta-section';
+export { default as Footer } from './footer';

@@ -1,0 +1,369 @@
+openapi: 3.0.3
+info:
+  title: QR Code Generator API
+  description: Professional QR code generation service with customization options
+  version: 1.0.0
+  contact:
+    name: QR Code API Support
+    email: support@qr-api.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: https://your-app.vercel.app/terms
+
+servers:
+  - url: https://your-app.vercel.app/api
+    description: Production server
+  - url: http://localhost:5000/api
+    description: Development server
+
+paths:
+  /health:
+    get:
+      summary: Health check endpoint
+      description: Returns the current health status of the API
+      operationId: getHealthStatus
+      tags:
+        - System
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "healthy"
+                  timestamp:
+                    type: string
+                    format: date-time
+                    example: "2025-01-10T22:55:27.370Z"
+                  version:
+                    type: string
+                    example: "1.0.0"
+                  environment:
+                    type: string
+                    example: "production"
+
+  /qr/generate:
+    post:
+      summary: Generate QR code
+      description: Generate a QR code with custom content and styling options
+      operationId: generateQRCode
+      tags:
+        - QR Code Generation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QRCodeRequest'
+            examples:
+              text_example:
+                summary: Simple text QR code
+                value:
+                  type: "text"
+                  content: "Hello World!"
+                  size: 300
+                  format: "png"
+              url_example:
+                summary: Website URL QR code
+                value:
+                  type: "url"
+                  content: "https://example.com"
+                  size: 400
+                  color: "#000000"
+                  format: "svg"
+              wifi_example:
+                summary: WiFi network QR code
+                value:
+                  type: "wifi"
+                  content:
+                    ssid: "MyNetwork"
+                    password: "mypassword"
+                    security: "WPA"
+                  size: 250
+                  format: "png"
+      responses:
+        '200':
+          description: QR code generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QRCodeResponse'
+        '400':
+          description: Bad request - invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /qr/batch:
+    post:
+      summary: Generate multiple QR codes (Premium)
+      description: Generate multiple QR codes in a single request
+      operationId: generateBatchQRCodes
+      tags:
+        - QR Code Generation
+        - Premium
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchQRCodeRequest'
+      responses:
+        '200':
+          description: Batch QR codes generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchQRCodeResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Premium feature - upgrade required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    RapidAPIKey:
+      type: apiKey
+      in: header
+      name: X-RapidAPI-Key
+    RapidAPIHost:
+      type: apiKey
+      in: header
+      name: X-RapidAPI-Host
+
+  schemas:
+    QRCodeRequest:
+      type: object
+      required:
+        - type
+        - content
+      properties:
+        type:
+          type: string
+          enum: [text, url, wifi, email, phone, vcard]
+          description: Type of QR code to generate
+          example: "text"
+        content:
+          oneOf:
+            - type: string
+              description: Simple text content
+              example: "Hello World!"
+            - type: object
+              description: Structured content for complex types
+              properties:
+                ssid:
+                  type: string
+                  example: "MyNetwork"
+                password:
+                  type: string
+                  example: "mypassword"
+                security:
+                  type: string
+                  enum: [WEP, WPA, nopass]
+                  example: "WPA"
+        size:
+          type: integer
+          minimum: 100
+          maximum: 1000
+          default: 300
+          description: Size of QR code in pixels
+          example: 300
+        color:
+          type: string
+          pattern: "^#[0-9A-Fa-f]{6}$"
+          default: "#000000"
+          description: Foreground color in hex format
+          example: "#000000"
+        backgroundColor:
+          type: string
+          pattern: "^#[0-9A-Fa-f]{6}$"
+          default: "#FFFFFF"
+          description: Background color in hex format
+          example: "#FFFFFF"
+        format:
+          type: string
+          enum: [png, jpg, svg, pdf]
+          default: "png"
+          description: Output format
+          example: "png"
+        errorCorrection:
+          type: string
+          enum: [L, M, Q, H]
+          default: "M"
+          description: Error correction level
+          example: "M"
+
+    QRCodeResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            qr_code:
+              type: string
+              description: Base64 encoded QR code or SVG content
+              example: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
+            download_url:
+              type: string
+              format: uri
+              description: Direct download URL for the QR code
+              example: "https://cdn.qr-api.com/qr/abc123.png"
+            metadata:
+              type: object
+              properties:
+                size:
+                  type: string
+                  example: "300x300"
+                format:
+                  type: string
+                  example: "png"
+                generated_at:
+                  type: string
+                  format: date-time
+                  example: "2025-01-10T22:55:27.370Z"
+                file_size:
+                  type: integer
+                  description: File size in bytes
+                  example: 2048
+
+    BatchQRCodeRequest:
+      type: object
+      required:
+        - codes
+      properties:
+        codes:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/QRCodeRequest'
+        format:
+          type: string
+          enum: [png, jpg, svg]
+          default: "png"
+          description: Common format for all QR codes
+
+    BatchQRCodeResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            total:
+              type: integer
+              example: 5
+            generated:
+              type: integer
+              example: 5
+            failed:
+              type: integer
+              example: 0
+            qr_codes:
+              type: array
+              items:
+                type: object
+                properties:
+                  index:
+                    type: integer
+                    example: 0
+                  qr_code:
+                    type: string
+                    example: "data:image/png;base64,..."
+                  download_url:
+                    type: string
+                    example: "https://cdn.qr-api.com/qr/batch_0.png"
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: "INVALID_CONTENT"
+            message:
+              type: string
+              example: "Content parameter is required"
+            details:
+              type: string
+              example: "The 'content' field must be provided for QR code generation"
+
+security:
+  - RapidAPIKey: []
+    RapidAPIHost: []
+
+tags:
+  - name: System
+    description: System health and status endpoints
+  - name: QR Code Generation
+    description: QR code creation and customization
+  - name: Premium
+    description: Premium features requiring subscription
+
+x-rapidapi-config:
+  pricing:
+    - name: Basic
+      price: 0
+      requests: 1000
+      description: "Free tier with 1000 QR codes per month"
+    - name: Pro
+      price: 9.99
+      requests: 10000
+      description: "Pro tier with 10,000 QR codes per month + batch generation"
+    - name: Enterprise
+      price: 49.99
+      requests: 100000
+      description: "Enterprise tier with 100,000 QR codes per month + priority support"
+  
+  rate_limits:
+    Basic:
+      requests_per_minute: 10
+      requests_per_second: 1
+    Pro:
+      requests_per_minute: 100
+      requests_per_second: 10
+    Enterprise:
+      requests_per_minute: 1000
+      requests_per_second: 100
+
+  categories:
+    - Utilities
+    - Developer Tools
+    - Image Processing
+
+  keywords:
+    - qr code
+    - barcode
+    - generator
+    - api
+    - image
+    - utilities

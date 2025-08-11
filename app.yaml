@@ -1,0 +1,35 @@
+# Google App Engine deployment configuration
+runtime: nodejs20
+
+env_variables:
+  NODE_ENV: production
+  PORT: 8080
+
+automatic_scaling:
+  min_instances: 1
+  max_instances: 10
+  target_cpu_utilization: 0.6
+
+handlers:
+- url: /api/.*
+  script: auto
+  secure: always
+  
+- url: /.*
+  static_files: dist/public/index.html
+  upload: dist/public/index.html
+  secure: always
+  
+- url: /(.*)
+  static_files: dist/public/\1
+  upload: dist/public/(.*)
+  secure: always
+
+skip_files:
+- ^(.*/)?#.*#$
+- ^(.*/)?.*~$
+- ^(.*/)?.*\.py[co]$
+- ^(.*/)?.*/RCS/.*$
+- ^(.*/)?\..*$
+- ^(.*/)?node_modules/.*$
+- ^(.*/)?client/.*$

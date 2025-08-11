@@ -1,0 +1,12 @@
+# Render.com deployment configuration
+services:
+  - type: web
+    name: qr-code-api
+    env: node
+    buildCommand: npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+    healthCheckPath: /api/health
+    autoDeploy: false

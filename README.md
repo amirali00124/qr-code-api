@@ -76,6 +76,12 @@ GET /api/analytics?period=month
 
 No environment variables required for basic functionality.
 
+### Important Notes
+
+- Vercel automatically detects TypeScript files in `/api` directory as serverless functions
+- No explicit runtime configuration needed in vercel.json
+- The `qrcode` package dependency is automatically handled by Vercel
+
 ## RapidAPI Integration
 
 This API is designed for RapidAPI marketplace listing. The `rapidapi.yaml` file contains the OpenAPI specification for marketplace integration.
